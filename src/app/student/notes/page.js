@@ -1,12 +1,14 @@
 'use client';
 import { useState, useEffect } from 'react';
 
+export const dynamic = 'force-dynamic';
+
 export default function NotesLibrary() {
   const [notes, setNotes] = useState([]);
   const [folders, setFolders] = useState([]);
   const [search, setSearch] = useState('');
 
-  useEffect(() => { fetch('/api/notes').then(r => r.json()).then(d => { setNotes(d.notes); setFolders(d.folders); }); }, []);
+  useEffect(() => { fetch('/api/notes', { cache: 'no-store' }).then(r => r.json()).then(d => { setNotes(d.notes); setFolders(d.folders); }); }, []);
 
   const icons = { Mathematics: '📐', 'English Lit': '📖', Science: '🔬' };
   const filtered = search ? notes.filter(n => n.title.toLowerCase().includes(search.toLowerCase()) || n.subject.toLowerCase().includes(search.toLowerCase())) : notes;

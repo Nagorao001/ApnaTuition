@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 
+export const dynamic = 'force-dynamic';
+
 export default function NotesManager() {
   const [notes, setNotes] = useState([]);
   const [folders, setFolders] = useState([]);
@@ -8,7 +10,7 @@ export default function NotesManager() {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
 
-  const load = () => { fetch('/api/notes').then(r => r.json()).then(d => { setNotes(d.notes); setFolders(d.folders); }); };
+  const load = () => { fetch('/api/notes', { cache: 'no-store' }).then(r => r.json()).then(d => { setNotes(d.notes); setFolders(d.folders); }); };
   useEffect(() => { load(); }, []);
 
   const upload = async (e) => {
