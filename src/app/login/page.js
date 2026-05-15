@@ -58,11 +58,6 @@ export default function LoginPage() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-        <div className="login-demo">
-          <p style={{marginBottom: 8}}>Demo Credentials</p>
-          <p>Admin: <code>admin@tuitionmaster.com</code> / <code>admin123</code></p>
-          <p>Student: <code>emma.s@student.edu</code> / <code>student123</code></p>
-        </div>
       </div>
     </div>
   );

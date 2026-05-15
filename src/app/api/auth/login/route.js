@@ -49,7 +49,11 @@ export async function POST(request) {
     });
     return response;
   } catch (error) {
-    console.error('Login error:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    console.error('CRITICAL LOGIN ERROR:', {
+      message: error.message,
+      stack: error.stack,
+      code: error.code
+    });
+    return NextResponse.json({ error: `Server error: ${error.message}` }, { status: 500 });
   }
 }

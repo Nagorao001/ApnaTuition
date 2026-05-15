@@ -4,8 +4,12 @@ let pool;
 
 export function getDb() {
   if (!pool) {
+    const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+    if (!connectionString) {
+      console.error('Database connection string is missing! (POSTGRES_URL or DATABASE_URL)');
+    }
     pool = new Pool({
-      connectionString: process.env.POSTGRES_URL,
+      connectionString: connectionString,
       ssl: {
         rejectUnauthorized: false
       }
@@ -17,8 +21,8 @@ export function getDb() {
 export async function initTables() {
   const db = getDb();
 
-  await db.query(`
-    CREATE TABLE IF NOT EXISTS users (
+  const queries = [
+    `CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
@@ -31,9 +35,8 @@ export async function initTables() {
       photo_url TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS notes (
+    )`,
+    `CREATE TABLE IF NOT EXISTS notes (
       id TEXT PRIMARY KEY,
       title TEXT NOT NULL,
       subject TEXT NOT NULL,
@@ -45,9 +48,8 @@ export async function initTables() {
       assigned_to TEXT DEFAULT 'all',
       uploaded_by TEXT REFERENCES users(id),
       uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS tests (
+    )`,
+    `CREATE TABLE IF NOT EXISTS tests (
       id TEXT PRIMARY KEY,
       title TEXT NOT NULL,
       subject TEXT NOT NULL,
@@ -62,9 +64,8 @@ export async function initTables() {
       end_time TEXT,
       created_by TEXT REFERENCES users(id),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS scores (
+    )`,
+    `CREATE TABLE IF NOT EXISTS scores (
       id TEXT PRIMARY KEY,
       student_id TEXT NOT NULL REFERENCES users(id),
       test_id TEXT NOT NULL REFERENCES tests(id),
@@ -73,9 +74,8 @@ export async function initTables() {
       feedback TEXT,
       status TEXT DEFAULT 'graded' CHECK(status IN ('pending', 'graded')),
       graded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS games (
+    )`,
+    `CREATE TABLE IF NOT EXISTS games (
       id TEXT PRIMARY KEY,
       title TEXT NOT NULL,
       subject TEXT NOT NULL,
@@ -86,25 +86,22 @@ export async function initTables() {
       icon TEXT DEFAULT 'gamepad',
       enabled INTEGER DEFAULT 1,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS game_sessions (
+    )`,
+    `CREATE TABLE IF NOT EXISTS game_sessions (
       id TEXT PRIMARY KEY,
       student_id TEXT NOT NULL REFERENCES users(id),
       game_id TEXT NOT NULL REFERENCES games(id),
       duration_seconds INTEGER DEFAULT 0,
       played_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS activity_log (
+    )`,
+    `CREATE TABLE IF NOT EXISTS activity_log (
       id TEXT PRIMARY KEY,
       user_id TEXT NOT NULL REFERENCES users(id),
       action TEXT NOT NULL,
       details TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS messages (
+    )`,
+    `CREATE TABLE IF NOT EXISTS messages (
       id TEXT PRIMARY KEY,
       sender_id TEXT NOT NULL REFERENCES users(id),
       receiver_id TEXT NOT NULL REFERENCES users(id),
@@ -112,8 +109,17 @@ export async function initTables() {
       body TEXT NOT NULL,
       is_read INTEGER DEFAULT 0,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
+    )`
+  ];
+
+  for (const q of queries) {
+    try {
+      await db.query(q);
+    } catch (err) {
+      console.error('Error creating table:', err);
+      // Don't throw so other tables can try to create
+    }
+  }
 }
 
 export default getDb;
