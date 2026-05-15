@@ -444,8 +444,42 @@ tr:hover td { background: var(--surface-container-low); }
   .grid-main { grid-template-columns: 1fr; }
   .grid-3 { grid-template-columns: 1fr 1fr; }
 }
+
+/* Mobile Responsive */
+.mobile-header {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--sidebar-bg);
+  border-bottom: 1px solid var(--outline-variant);
+  position: sticky;
+  top: 0;
+  z-index: 101;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 99;
+}
+
 @media (max-width: 768px) {
-  .sidebar { display: none; }
+  .sidebar { 
+    left: -240px; 
+    transition: left 0.3s ease; 
+  }
+  .sidebar.open { 
+    left: 0; 
+  }
+  .sidebar-overlay.open {
+    display: block;
+  }
+  .mobile-header {
+    display: flex;
+  }
   .main-content { margin-left: 0; padding: 16px; }
   .stat-cards { grid-template-columns: 1fr; }
   .grid-2, .grid-3, .quick-access { grid-template-columns: 1fr; }

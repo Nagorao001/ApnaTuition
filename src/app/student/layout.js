@@ -16,6 +16,7 @@ export default function StudentLayout({ children }) {
   const pathname = usePathname();
   const [theme, setTheme] = useState('light');
   const [user, setUser] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem('theme') || 'light';
@@ -23,6 +24,11 @@ export default function StudentLayout({ children }) {
     document.documentElement.setAttribute('data-theme', saved);
     fetch('/api/auth/me').then(r => r.json()).then(d => setUser(d.user)).catch(() => {});
   }, []);
+
+  // Close sidebar when pathname changes
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   const toggleTheme = () => {
     const next = theme === 'light' ? 'dark' : 'light';
@@ -39,7 +45,9 @@ export default function StudentLayout({ children }) {
 
   return (
     <div className="app-layout">
-      <aside className="sidebar">
+      <div className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)}></div>
+      
+      <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-logo" style={{alignItems: 'center'}}>
           {user?.photo_url ? (
             <img src={user.photo_url} alt="DP" style={{width: 36, height: 36, borderRadius: '50%', objectFit: 'cover'}} />
@@ -63,7 +71,17 @@ export default function StudentLayout({ children }) {
           <button className="sidebar-link" onClick={logout}>🚪 Logout</button>
         </div>
       </aside>
-      <main className="main-content">{children}</main>
+
+      <div style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
+        <header className="mobile-header">
+          <div className="flex-row">
+            <div className="sidebar-logo-icon" style={{width: 32, height: 32}}>AT</div>
+            <h2 style={{fontSize: 18}}>ApnaTuition</h2>
+          </div>
+          <button className="btn btn-icon btn-ghost" onClick={() => setSidebarOpen(true)}>☰</button>
+        </header>
+        <main className="main-content">{children}</main>
+      </div>
     </div>
   );
 }

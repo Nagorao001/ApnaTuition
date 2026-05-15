@@ -16,12 +16,18 @@ export default function AdminLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
   const [theme, setTheme] = useState('light');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem('theme') || 'light';
     setTheme(saved);
     document.documentElement.setAttribute('data-theme', saved);
   }, []);
+
+  // Close sidebar when pathname changes
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   const toggleTheme = () => {
     const next = theme === 'light' ? 'dark' : 'light';
@@ -38,7 +44,9 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className="app-layout">
-      <aside className="sidebar">
+      <div className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)}></div>
+
+      <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-logo">
           <div className="sidebar-logo-icon">AT</div>
           <div><h2>ApnaTuition</h2><span>Admin Portal</span></div>
@@ -60,7 +68,17 @@ export default function AdminLayout({ children }) {
           <button className="sidebar-link" onClick={logout}>🚪 Logout</button>
         </div>
       </aside>
-      <main className="main-content">{children}</main>
+
+      <div style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
+        <header className="mobile-header">
+          <div className="flex-row">
+            <div className="sidebar-logo-icon" style={{width: 32, height: 32}}>AT</div>
+            <h2 style={{fontSize: 18}}>ApnaTuition</h2>
+          </div>
+          <button className="btn btn-icon btn-ghost" onClick={() => setSidebarOpen(true)}>☰</button>
+        </header>
+        <main className="main-content">{children}</main>
+      </div>
     </div>
   );
 }
