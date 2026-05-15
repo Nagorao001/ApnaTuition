@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "TuitionMaster — Student Learning Management System",
+  title: "ApnaTuition — Student Learning Management System",
   description: "Centralized platform for managing student notes, tests, scores, and educational games.",
 };
 

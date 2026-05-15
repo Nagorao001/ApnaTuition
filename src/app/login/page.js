@@ -38,9 +38,9 @@ export default function LoginPage() {
     <div className="login-page">
       <div className="login-card">
         <div className="login-logo">
-          <div className="login-logo-icon">TM</div>
+          <div className="login-logo-icon">AT</div>
           <div>
-            <h1>TuitionMaster</h1>
+            <h1>ApnaTuition</h1>
             <span className="body-sm text-muted">Learning Management System</span>
           </div>
         </div>

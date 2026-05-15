@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'tuitionmaster-secret-key-change-in-production-2026';
+const JWT_SECRET = process.env.JWT_SECRET || 'apnatuition-secret-key-change-in-production-2026';
 const JWT_EXPIRES_IN = '7d';
 
 export function generateToken(user) {

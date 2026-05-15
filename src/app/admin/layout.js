@@ -40,8 +40,8 @@ export default function AdminLayout({ children }) {
     <div className="app-layout">
       <aside className="sidebar">
         <div className="sidebar-logo">
-          <div className="sidebar-logo-icon">TM</div>
-          <div><h2>TuitionMaster</h2><span>Admin Portal</span></div>
+          <div className="sidebar-logo-icon">AT</div>
+          <div><h2>ApnaTuition</h2><span>Admin Portal</span></div>
         </div>
         <nav className="sidebar-nav">
           {NAV.map(n => (
